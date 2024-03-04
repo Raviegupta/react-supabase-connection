@@ -1,3 +1,29 @@
 #root {
   max-width: 1280px;
+  margin: 0 auto;
+}
+h2{
+  text-align: center;
+}
+table{
+  border-collapse: collapse;
+  width: 480px;
+  max-width: 95%;
+  margin: 0 auto;
+}
+th, td {
+  border: 1px solid #000;
+  text-align: center;
+  padding: 6px 8px;
+}
+th {
+  background-color: #f2f2f2;
+}
+
+form {
+  /* border: 2px solid red; */
+  margin: 20px auto;
+  width: 480px;
+  max-width: 95%;
+  text-align: center;
 }
