@@ -8,6 +8,8 @@ function App() {
   useEffect(()=>{ getAllData() },[])
   const [user2, setUser2] = useState({id:'', name:'', age:''})
 
+  const [action, setAction] = useState('Create');
+
   // read all rows from table
   async function getAllData() {
     let { data: users, error } = await supabase
@@ -25,18 +27,8 @@ function App() {
     })
   }
 
-  const handleChange2 = (event) => {
-    setUser2(prevFormData=>{
-      return {
-        ...prevFormData,
-        [event.target.name]: event.target.value
-      }
-    })
-  }
-
   // Insert new row / post new form data
-  async function createUser(event) {
-    event.preventDefault();
+  async function createUser() {
     try{
       await supabase
         .from('users')
@@ -70,33 +62,34 @@ function App() {
     // console.log(userId.name, userId.age)
     const updateRow = users.find((user)=>user.id===userId)
     console.log(updateRow);
-    setUser2({id:updateRow.id, name:updateRow.name, age:updateRow.age})
+    setUser({id:updateRow.id, name:updateRow.name, age:updateRow.age})
+    setAction('Save Changes');
   }
 
   async function updateUser(userId) {
     try{
       const { data, error } = await supabase
-      .from('users')
-      .update({ name: user2.name, age: user2.age })
-      .eq('id', userId)
-
-      setUser2({id:'', name:'', age:''})
+        .from('users')
+        .update({ name: user.name, age: user.age })
+        .eq('id', userId)
+      setUser({id:'', name:'', age:''});
+      setAction('Create');
     } catch (error) {
         console.log(error)
     }
+    
     getAllData();
   }
   
-
-  console.log(user2)
+  // console.log(user2)
 
   return (
     <>
       {/* FORM 1 */}
-      <form onSubmit={createUser}>
+      <form onSubmit={(event)=>{ event.preventDefault(); action=='Create'?createUser():updateUser(user.id) }} >
         <input type="text" placeholder='Name' name="name" onChange={handleChange} value={user.name} />
         <input type="number" placeholder='Age' name="age" onChange={handleChange} value={user.age} />
-        <button type="submit">Create</button>
+        <button type="submit">{action}</button>
       </form>
 
       <table>
@@ -122,13 +115,6 @@ function App() {
             ))}
         </tbody>
       </table>
-
-      {/* FORM 2 */}
-      <form onSubmit={(event)=>{event.preventDefault(); updateUser(user2.id)}}>
-        <input type="text" value={user2.name} name="name" onChange={handleChange2} />
-        <input type="number" value={user2.age}  name="age" onChange={handleChange2} />
-        <button type="submit">Save Changes</button>
-      </form>
     </>
   )
 }
